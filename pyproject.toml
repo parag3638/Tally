@@ -1,0 +1,104 @@
+[project]
+name = "ai-expense-tracker"
+version = "1.0.0"
+description = "Production-grade AI expense tracker: agentic receipt extraction, semantic search, text-to-SQL chat, MCP server, evals."
+readme = "README.MD"
+requires-python = ">=3.11,<3.13"
+license = { file = "LICENCE.txt" }
+authors = [{ name = "Parag Singh" }]
+
+dependencies = [
+    # ---- Web / API ----
+    "fastapi>=0.115,<0.120",
+    "uvicorn[standard]>=0.32,<0.36",
+    "python-multipart>=0.0.12",
+    "sse-starlette>=2.1",
+
+    # ---- Config / settings ----
+    "pydantic[email]>=2.9,<3",
+    "pydantic-settings>=2.5",
+    "python-dotenv>=1.0",
+    "pyyaml>=6.0",
+
+    # ---- Database (dual driver: psycopg2 for app, psycopg3 for LangGraph checkpointer) ----
+    "psycopg2-binary>=2.9.9",
+    "psycopg[binary]>=3.2",
+    "psycopg-pool>=3.2",
+    "yoyo-migrations>=9.0",
+    "pgvector>=0.3.6",
+
+    # ---- Auth / security ----
+    "passlib[bcrypt]>=1.7.4",
+    "bcrypt>=4.2,<5",
+    "pyjwt>=2.9",
+
+    # ---- AI / agents ----
+    "langgraph>=0.2.60,<0.3",
+    "langgraph-checkpoint-postgres>=2.0.7",
+    "langchain>=0.3.7,<0.4",
+    "langchain-core>=0.3.20,<0.4",
+    "langchain-openai>=0.2.8,<0.3",
+    "langchain-anthropic>=0.3,<0.4",
+    "langsmith>=0.1.140",
+    "openai>=1.54",
+    "anthropic>=0.39",
+
+    # ---- Text-to-SQL safety ----
+    "sqlglot>=25.30",
+
+    # ---- Background worker ----
+    "arq>=0.26",
+    "redis>=5.2",
+
+    # ---- Observability ----
+    "structlog>=24.4",
+
+    # ---- HTTP client ----
+    "httpx>=0.27",
+
+    # ---- MCP server ----
+    "mcp>=1.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "pytest-cov>=6.0",
+    "ruff>=0.8",
+    "httpx>=0.27",
+    "testcontainers[postgres]>=4.8",
+    "fakeredis>=2.26",
+]
+
+[project.scripts]
+expense-api = "src.main:run"
+expense-worker = "src.worker:run"
+expense-migrate = "src.db.migrate:main"
+expense-mcp = "src.mcp.server:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "C4"]
+# B008: FastAPI's Depends()/Query()/File() in defaults is the intended idiom.
+ignore = ["E501", "B008"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+markers = [
+    "eval: long-running LangSmith eval tests (deselected by default)",
+    "integration: tests requiring a live Postgres/Redis",
+]
+addopts = "-m 'not eval'"
+testpaths = ["tests"]
