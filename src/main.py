@@ -15,6 +15,7 @@ from src.api.routers import (
     auth_routes,
     categories_routes,
     expenses_routes,
+    graph_routes,
     health_routes,
     payment_methods_routes,
 )
@@ -34,6 +35,9 @@ async def lifespan(app: FastAPI):
     try:
         yield
     finally:
+        from src.db.checkpoint_pool import close_checkpoint_pool
+
+        close_checkpoint_pool()
         close_pool()
         log.info("app.shutdown")
 
@@ -57,6 +61,7 @@ def create_app() -> FastAPI:
     app.include_router(categories_routes.router)
     app.include_router(payment_methods_routes.router)
     app.include_router(expenses_routes.router)
+    app.include_router(graph_routes.router)
 
     return app
 
