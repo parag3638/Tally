@@ -19,6 +19,7 @@ from src.api.routers import (
     health_routes,
     payment_methods_routes,
     receipts_routes,
+    search_routes,
 )
 from src.core.config import settings
 from src.core.exceptions import register_exception_handlers
@@ -66,6 +67,7 @@ def create_app() -> FastAPI:
     app.include_router(expenses_routes.router)
     app.include_router(graph_routes.router)
     app.include_router(receipts_routes.router)
+    app.include_router(search_routes.router)
 
     return app
 

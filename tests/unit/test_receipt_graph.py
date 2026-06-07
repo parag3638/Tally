@@ -48,6 +48,11 @@ def patched_models(monkeypatch):
 
     monkeypatch.setattr(extractor_mod, "structured_model", fake_extract)
     monkeypatch.setattr(categorizer_mod, "structured_model", fake_categorize)
+
+    # Keep the duplicate-check node offline (no embedding API calls).
+    from src.services import embedding_service
+
+    monkeypatch.setattr(embedding_service, "find_possible_duplicates", lambda uid, exp: [])
     return state
 
 

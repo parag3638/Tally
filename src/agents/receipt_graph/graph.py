@@ -22,6 +22,7 @@ from langgraph.graph import END, START, StateGraph
 from src.agents.receipt_graph.nodes.categorizer import categorizer_node
 from src.agents.receipt_graph.nodes.confidence_router import confidence_router_node
 from src.agents.receipt_graph.nodes.corrector import corrector_node
+from src.agents.receipt_graph.nodes.duplicate_check import duplicate_check_node
 from src.agents.receipt_graph.nodes.extractor import extractor_node
 from src.agents.receipt_graph.nodes.human_review import human_review_node
 from src.agents.receipt_graph.nodes.image_encoder import image_encoder_node
@@ -54,6 +55,7 @@ def build_graph() -> StateGraph:
     g.add_node("image_encoder", image_encoder_node)
     g.add_node("extractor", extractor_node)
     g.add_node("categorizer", categorizer_node)
+    g.add_node("duplicate_check", duplicate_check_node)
     g.add_node("confidence_router", confidence_router_node)
     g.add_node("human_review", human_review_node)
     g.add_node("corrector", corrector_node)
@@ -62,7 +64,8 @@ def build_graph() -> StateGraph:
     g.add_edge(START, "image_encoder")
     g.add_conditional_edges("image_encoder", _route_after_encode, {"extractor": "extractor", END: END})
     g.add_edge("extractor", "categorizer")
-    g.add_edge("categorizer", "confidence_router")
+    g.add_edge("categorizer", "duplicate_check")
+    g.add_edge("duplicate_check", "confidence_router")
     g.add_conditional_edges(
         "confidence_router",
         _route_after_confidence,
