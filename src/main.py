@@ -14,6 +14,7 @@ from src.api.middleware import RequestContextMiddleware
 from src.api.routers import (
     auth_routes,
     categories_routes,
+    chat_routes,
     expenses_routes,
     graph_routes,
     health_routes,
@@ -38,10 +39,12 @@ async def lifespan(app: FastAPI):
         yield
     finally:
         from src.db.checkpoint_pool import close_checkpoint_pool
+        from src.db.readonly import close_readonly_pool
         from src.queue import close_arq_pool
 
         await close_arq_pool()
         close_checkpoint_pool()
+        close_readonly_pool()
         close_pool()
         log.info("app.shutdown")
 
@@ -68,6 +71,7 @@ def create_app() -> FastAPI:
     app.include_router(graph_routes.router)
     app.include_router(receipts_routes.router)
     app.include_router(search_routes.router)
+    app.include_router(chat_routes.router)
 
     return app
 
