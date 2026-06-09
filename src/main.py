@@ -18,6 +18,7 @@ from src.api.routers import (
     expenses_routes,
     graph_routes,
     health_routes,
+    insights_routes,
     payment_methods_routes,
     receipts_routes,
     search_routes,
@@ -72,6 +73,7 @@ def create_app() -> FastAPI:
     app.include_router(receipts_routes.router)
     app.include_router(search_routes.router)
     app.include_router(chat_routes.router)
+    app.include_router(insights_routes.router)
 
     return app
 
