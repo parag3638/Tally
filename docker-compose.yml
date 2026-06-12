@@ -1,0 +1,84 @@
+# One command to run everything: `docker compose up --build`
+# Brings up Postgres(+pgvector), Redis, the API, and the background worker.
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: ${PGUSER:-expenses}
+      POSTGRES_PASSWORD: ${PGPASSWORD:-expenses}
+      POSTGRES_DB: ${PGDATABASE:-expenses}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PGUSER:-expenses} -d ${PGDATABASE:-expenses}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # One-shot: apply migrations + seed reference data, then exit.
+  migrate:
+    build: .
+    command: ["python", "-m", "src.db.migrate"]
+    env_file: .env
+    environment:
+      PGHOST: db
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    build: .
+    command: ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    env_file: .env
+    environment:
+      PGHOST: db
+      REDIS_URL: redis://redis:6379/0
+      RECEIPT_STORAGE_DIR: /app/data/receipts
+    ports:
+      - "8000:8000"
+    volumes:
+      - receipts:/app/data/receipts
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').status==200 else 1)\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  worker:
+    build: .
+    command: ["arq", "src.worker.WorkerSettings"]
+    env_file: .env
+    environment:
+      PGHOST: db
+      REDIS_URL: redis://redis:6379/0
+      RECEIPT_STORAGE_DIR: /app/data/receipts
+    volumes:
+      - receipts:/app/data/receipts
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  receipts:
