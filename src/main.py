@@ -52,7 +52,7 @@ async def lifespan(app: FastAPI):
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="AI Expense Management API",
+        title="Tally API",
         version="1.0.0",
         description=(
             "Agentic receipt extraction, semantic search, text-to-SQL chat, "
@@ -82,7 +82,7 @@ app = create_app()
 
 
 def run() -> None:
-    """Console-script entrypoint (`expense-api`)."""
+    """Console-script entrypoint (`tally-api`)."""
     import uvicorn
 
     uvicorn.run("src.main:app", host="0.0.0.0", port=8000, reload=not settings.is_production)

@@ -72,4 +72,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build image
-        run: docker build -t ai-expense-tracker:ci .
+        run: docker build -t tally:ci .

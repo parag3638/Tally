@@ -1,7 +1,7 @@
 [project]
-name = "ai-expense-tracker"
+name = "tally"
 version = "1.0.0"
-description = "Production-grade AI expense tracker: agentic receipt extraction, semantic search, text-to-SQL chat, MCP server, evals."
+description = "Tally — an agentic AI finance backend: receipt extraction, semantic search, text-to-SQL chat, anomaly insights, MCP server, and evals."
 readme = "README.MD"
 requires-python = ">=3.11,<3.13"
 license = { file = "LICENCE.txt" }
@@ -72,10 +72,10 @@ dev = [
 ]
 
 [project.scripts]
-expense-api = "src.main:run"
-expense-worker = "src.worker:run"
-expense-migrate = "src.db.migrate:main"
-expense-mcp = "src.mcp.server:main"
+tally-api = "src.main:run"
+tally-worker = "src.worker:run"
+tally-migrate = "src.db.migrate:main"
+tally-mcp = "src.mcp.server:main"
 
 [build-system]
 requires = ["setuptools>=68"]

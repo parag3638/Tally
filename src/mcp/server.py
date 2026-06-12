@@ -17,7 +17,7 @@ from mcp.server.fastmcp import FastMCP
 from src.core.config import settings
 from src.core.logging import configure_logging
 
-mcp = FastMCP("ai-expense-tracker")
+mcp = FastMCP("tally")
 
 _UID = settings.mcp_user_id
 

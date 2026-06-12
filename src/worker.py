@@ -4,7 +4,7 @@ Runs the receipt-extraction graph off the request path. The graph + DB code is
 synchronous (psycopg2 / sync LangGraph), so each task offloads to a thread via
 ``asyncio.to_thread`` to avoid blocking the event loop.
 
-Run with:  arq src.worker.WorkerSettings   (or the ``expense-worker`` script)
+Run with:  arq src.worker.WorkerSettings   (or the ``tally-worker`` script)
 """
 
 from __future__ import annotations
@@ -82,7 +82,7 @@ class WorkerSettings:
 
 
 def run() -> None:
-    """Console-script entrypoint (`expense-worker`)."""
+    """Console-script entrypoint (`tally-worker`)."""
     from arq import run_worker
 
     run_worker(WorkerSettings)

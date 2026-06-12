@@ -66,7 +66,7 @@ class Settings(BaseSettings):
     langchain_tracing_v2: bool = False
     langchain_endpoint: str = "https://api.smith.langchain.com"
     langsmith_api_key: str | None = None
-    langchain_project: str = "ai-expense-tracker"
+    langchain_project: str = "tally"
 
     # ---- Storage ----
     receipt_storage_dir: str = "./data/receipts"

@@ -1,10 +1,12 @@
-# AI Expense Tracker — Agentic Backend
+<h1 align="center">Tally</h1>
 
-A production-grade backend that turns **photos of receipts** into categorized,
-searchable expenses using a multi-agent AI pipeline — and lets you **chat with your
-spending** in natural language. Built to showcase modern AI engineering on top of a
-real, multi-tenant backend: agentic workflows with human-in-the-loop, RAG /
-text-to-SQL, vector search, an MCP server, evals, and observability.
+<p align="center"><em>Snap a receipt — Tally does the rest.</em></p>
+
+A production-grade, agentic AI finance backend. **Tally** turns **photos of receipts**
+into categorized, searchable expenses using a multi-agent pipeline — and lets you
+**chat with your spending** in plain English. Built to showcase modern AI engineering
+on top of a real, multi-tenant backend: agentic workflows with human-in-the-loop,
+RAG / text-to-SQL, vector search, an MCP server, evals, and observability.
 
 > Started life as a small LangGraph demo; rebuilt into a full backend with auth,
 > async workers, Docker, and CI.
@@ -161,7 +163,7 @@ Add to `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "expenses": {
+    "tally": {
       "command": "python",
       "args": ["-m", "src.mcp.server"],
       "env": { "PGHOST": "localhost", "MCP_USER_ID": "1", "OPENAI_API_KEY": "..." }
